@@ -1,44 +1,38 @@
 1class Solution {
 2public:
-3    bool f(string &s,string &p,int i,int j ,vector<vector<int>>& dp){
+3    bool isMatch(string s, string p) {
 4
-5        int n=s.size();
-6        int m=p.size();
+5        int n = s.size();
+6        int m = p.size();
 7
-8        if(i==n && j==m)
-9            return true;
-10
-11        if(j==m)
-12            return false;
-13        
-14        if(dp[i][j] != -1) return dp[i][j] ;
-15
-16        if(i==n){
-17            while(j+1<m && p[j+1]=='*')
-18                j+=2;
-19
-20            return dp[i][j] = j==m;
-21        }
+8        vector<vector<bool>> dp(n + 1, vector<bool>(m + 1, false));
+9
+10        dp[n][m] = true;
+11
+12        for (int j = m - 2; j >= 0; j--) {
+13            if (p[j + 1] == '*')
+14                dp[n][j] = dp[n][j + 2];
+15        }
+16
+17        for (int i = n - 1; i >= 0; i--) {
+18
+19            for (int j = m - 1; j >= 0; j--) {
+20
+21                bool match = (s[i] == p[j] || p[j] == '.');
 22
-23        bool match=(s[i]==p[j] || p[j]=='.');
+23                if (j + 1 < m && p[j + 1] == '*') {
 24
-25        if(j+1<m && p[j+1]=='*'){
-26
-27            return dp[i][j] = f(s,p,i,j+2,dp) ||
-28                  (match && f(s,p,i+1,j,dp));
+25                    dp[i][j] = dp[i][j + 2] ||
+26                               (match && dp[i + 1][j]);
+27
+28                } else {
 29
-30        }
+30                    dp[i][j] = match && dp[i + 1][j + 1];
 31
-32        if(match)
-33            return dp[i][j] = f(s,p,i+1,j+1,dp);
-34
-35        return dp[i][j] = false;
-36    }
-37
-38    bool isMatch(string s, string p) {
-39        int n=s.size();
-40        int m=p.size();
-41        vector<vector<int>> dp(n+1,vector<int>(m+1,-1)) ;
-42        return f(s,p,0,0,dp);
-43    }
-44};
+32                }
+33            }
+34        }
+35
+36        return dp[0][0];
+37    }
+38};
