@@ -1,51 +1,45 @@
 1class Solution {
 2public:
-3    void merge( int low , int high , int mid , vector<int>& nums){
-4        int n1 = mid - low + 1 ;
-5        int n2 = high - mid ;
-6        vector<int> L(n1) , R(n2) ;
-7        for(int i = 0 ; i < n1 ; i++ ){
-8            L[i] = nums[low + i] ;
+3    void merge(int s , int mid , int e ,vector<int>& nums){
+4        int L1 = mid - s ;
+5        int L2 = e - mid + 1 ;
+6        vector<int> L(L1) , R(L2) ;
+7        for( int i = 0 ; i < L1 ; i++ ){
+8            L[i] = nums[s+i] ;
 9        }
-10        for(int i = 0 ; i < n2 ; i++ ){
-11            R[i] = nums[ mid + 1 + i] ;
+10        for( int i = 0 ; i < L2 ; i++ ){
+11            R[i] = nums[mid+i] ;
 12        }
-13        int i = 0 ;
-14        int j = 0 ;
-15        int k = low ;
-16        while(i < n1 && j < n2){
-17            if(L[i] <= R[j]){
-18                nums[k] = L[i] ;
-19                i++ ;
-20                k++ ;
-21            }
-22            else{
-23                nums[k] = R[j] ;
-24                j++ ;
-25                k++ ;
-26            }
+13        int k = s ; int i = 0 ; int j = 0 ;
+14        while(i < L1 && j < L2){
+15            if( L[i] >= R[j]){
+16                nums[k++] = R[j] ;
+17                j++ ;
+18            }
+19            else{
+20                nums[k++] = L[i] ;
+21                i++ ;
+22            }
+23        }
+24        while( i < L1 ){
+25            nums[k++] = L[i] ;
+26            i++ ;
 27        }
-28        while(i < n1){
-29            nums[k] = L[i] ;
-30            i++ ;
-31            k++ ;
-32        }
-33        while(j < n2){
-34            nums[k] = R[j] ;
-35            j++ ;
-36            k++ ;
-37        }
-38    }
-39    void mergesort(int low , int high , vector<int>& nums){
-40        if( low >= high) return ;
-41        int mid = low + ( high - low )/2 ;
-42        mergesort(low,mid,nums) ;
-43        mergesort(mid+1,high,nums) ;
-44        merge(low,high,mid,nums) ;
-45    }
-46    vector<int> sortArray(vector<int>& nums) {
-47        int n = nums.size() ;
-48        mergesort(0,n-1,nums) ;
-49        return nums ;
-50    }
-51};
+28        while( j < L2 ){
+29            nums[k++] = R[j] ;
+30            j++ ;
+31        }
+32    }
+33    void mergesort(int s , int e , vector<int>& nums){
+34        if( s >= e ) return ;
+35        int mid = s + ( e - s )/2 ;
+36        mergesort(s,mid,nums) ;
+37        mergesort(mid+1,e,nums) ;
+38        merge(s,mid+1,e,nums) ;
+39    }
+40    vector<int> sortArray(vector<int>& nums) {
+41        int n = nums.size() ;
+42        mergesort(0,n-1,nums) ;
+43        return nums ;
+44    }
+45};
